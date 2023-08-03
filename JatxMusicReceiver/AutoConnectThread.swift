@@ -8,7 +8,7 @@
 
 import Foundation
 
-class AutoConnectThread: NSThread {
+class AutoConnectThread: Thread {
     weak var ui: UI?
     
     var isInterrupted = false
@@ -24,10 +24,10 @@ class AutoConnectThread: NSThread {
     override func main() {
         while (!isInterrupted) {
             if (ui != nil && ui!.isAutoConnect()) {
-                ui!.startJob(true)
+                ui!.startJob(fromAutoConnectThread: true)
             }
             
-            NSThread.sleepForTimeInterval(5.0)
+            Thread.sleep(forTimeInterval: 5.0)
         }
     }
 }

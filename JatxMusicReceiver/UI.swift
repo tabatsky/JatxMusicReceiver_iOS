@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol UI: class {
+protocol UI: AnyObject {
     func startJob(fromAutoConnectThread: Bool);
     func stopJob();
     

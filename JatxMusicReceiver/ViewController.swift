@@ -38,29 +38,29 @@ class ViewController: UIViewController, UI {
 
     @IBOutlet weak var hostTextOutlet: UITextField!
     
-    @IBAction func switchClick(sender: UISwitch) {
-        autoConnect = switchOutlet.on
+    @IBAction func switchClick(_ sender: UISwitch) {
+        autoConnect = switchOutlet.isOn
         saveSettings()
     }
     @IBOutlet weak var switchOutlet: UISwitch!
     
-    @IBAction func startStopClick(sender: UIButton) {
+    @IBAction func startStopClick(_ sender: UIButton) {
         if (!isRunning) {
-            startJob(false)
+            startJob(fromAutoConnectThread: false)
         } else {
             stopJob()
         }
     }
     @IBOutlet weak var startStopOutlet: UIButton!
 
-    @IBAction func buttonExitClick(sender: UIButton) {
+    @IBAction func buttonExitClick(_ sender: UIButton) {
         exit(0)
     }
     
     func loadSettings() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        autoConnect = userDefaults.boolForKey("AUTO_CONNECT")
-        if let str = userDefaults.stringForKey("IP") {
+        let userDefaults = UserDefaults.standard
+        autoConnect = userDefaults.bool(forKey: "AUTO_CONNECT")
+        if let str = userDefaults.string(forKey: "IP") {
             host = str
         } else {
             host = "127.0.0.1"
@@ -68,13 +68,13 @@ class ViewController: UIViewController, UI {
     }
     
     func saveSettings() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        userDefaults.setBool(autoConnect!, forKey: "AUTO_CONNECT")
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(autoConnect!, forKey: "AUTO_CONNECT")
         userDefaults.setValue(host!, forKeyPath: "IP")
     }
     
     func startJob(fromAutoConnectThread: Bool) {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             //NSLog("1")
             if (fromAutoConnectThread && !self.isAutoConnect()) {
                 return
@@ -86,7 +86,7 @@ class ViewController: UIViewController, UI {
             }
             self.isRunning = true
             NSLog("start job")
-            self.startStopOutlet.setTitle("Stop", forState: UIControlState.Normal)
+            self.startStopOutlet.setTitle("Stop", for: UIControl.State.normal)
             self.host = self.hostTextOutlet.text
             //NSLog("3")
             self.saveSettings()
@@ -103,14 +103,14 @@ class ViewController: UIViewController, UI {
     }
     
     func stopJob() {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             if (!self.isRunning) {
                 return
             }
             self.isRunning = false
             self.rp?.cancel()
             self.rc?.cancel()
-            self.startStopOutlet.setTitle("Start", forState: UIControlState.Normal)
+            self.startStopOutlet.setTitle("Start", for: UIControl.State.normal)
             NSLog("stop job");
         }
     }
@@ -120,20 +120,23 @@ class ViewController: UIViewController, UI {
     }
     
     func play() {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             NSLog("play")
+            self.rp?.play()
         }
     }
     
     func pause() {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             NSLog("pause")
+            self.rp?.pause()
         }
     }
     
     func setVolume(vol: Int) {
-        dispatch_async(dispatch_get_main_queue()) {
+        DispatchQueue.main.async {
             NSLog("volume: %d", vol);
+            self.rp?.setVolume(vol: vol)
         }
     }
 }

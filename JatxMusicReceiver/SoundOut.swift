@@ -8,10 +8,10 @@
 
 import Foundation
 
-protocol SoundOut: class {
+protocol SoundOut: AnyObject {
     func renew(frameRate: Int, channels: Int)
     func setVolume(volume: Int)
-    func write(data: [UInt8], offset: Int, size: Int)
+    func write(frame: Frame)
     func destroy()
     func play()
     func pause()

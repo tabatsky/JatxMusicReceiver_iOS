@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ReceiverController: NSThread, NSStreamDelegate {
+class ReceiverController: Thread, StreamDelegate {
     let CONNECT_PORT_CONTROLLER = 7172
     
     let SOCKET_TIMEOUT = 1500
@@ -22,8 +22,8 @@ class ReceiverController: NSThread, NSStreamDelegate {
     
     var host: String?
     
-    var inputStream : NSInputStream?
-    var outputStream : NSOutputStream?
+    var inputStream : InputStream?
+    var outputStream : OutputStream?
     
     init(hostname: String, ui: UI) {
         host = hostname;
@@ -51,7 +51,7 @@ class ReceiverController: NSThread, NSStreamDelegate {
         NSLog("(controller) " + "volume: %d", vol);
         
         if (ui != nil) {
-            ui!.setVolume(vol);
+            ui!.setVolume(vol: vol)
         }
     }
     
@@ -69,22 +69,22 @@ class ReceiverController: NSThread, NSStreamDelegate {
         inputStream!.delegate = self
         //outputStream!.delegate = self
         
-        inputStream!.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+        inputStream!.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)
         //outputStream!.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
         
         inputStream!.open()
         //outputStream!.open()
         
         var numBytesRead : Int
-        var data = [UInt8](count: 1, repeatedValue: 0)
+        var data = [UInt8](repeating: 0, count: 1)
         
         var cmdSkipped = 0;
         
-        while (!self.cancelled) {
+        while (!self.isCancelled) {
             if (inputStream!.hasBytesAvailable) {
                 cmdSkipped = 0;
                 
-                numBytesRead = inputStream!.read(UnsafeMutablePointer(data), maxLength: 1)
+                numBytesRead = inputStream!.read(UnsafeMutablePointer(mutating: data), maxLength: 1)
                 
                 if (numBytesRead < 0) {
                     NSLog("controller frame broken")
@@ -95,7 +95,7 @@ class ReceiverController: NSThread, NSStreamDelegate {
                     let cmd = data[0]
                     
                     if (cmd>=0&&cmd<=100) {
-                        setVolume(Int(cmd));
+                        setVolume(vol: Int(cmd));
                     } else if (cmd==COMMAND_PLAY) {
                         play();
                     } else if (cmd==COMMAND_PAUSE) {
@@ -111,7 +111,7 @@ class ReceiverController: NSThread, NSStreamDelegate {
                     }
                 }
             } else {
-                NSThread.sleepForTimeInterval(0.05)
+                Thread.sleep(forTimeInterval: 0.05)
                 cmdSkipped += 1
                 if (cmdSkipped > 7) {
                     self.cancel()
@@ -119,7 +119,7 @@ class ReceiverController: NSThread, NSStreamDelegate {
             }
         }
         
-        CFReadStreamSetProperty(inputStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue)
+        CFReadStreamSetProperty(inputStream, CFStreamPropertyKey( kCFStreamPropertyShouldCloseNativeSocket), kCFBooleanTrue)
         
         inputStream?.close()
         //outputStream?.close()

@@ -19,6 +19,7 @@
 		84C659DE1F79AF30007BE6E9 /* IOSSoundOut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C659DD1F79AF30007BE6E9 /* IOSSoundOut.swift */; };
 		84C659E01F79B05E007BE6E9 /* ReceiverPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C659DF1F79B05E007BE6E9 /* ReceiverPlayer.swift */; };
 		84C659E21F79B7F8007BE6E9 /* Frame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C659E11F79B7F8007BE6E9 /* Frame.swift */; };
+		CEB1B9512A7A32D700C75A6B /* SoundOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB1B9502A7A32D700C75A6B /* SoundOutput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		84C659DD1F79AF30007BE6E9 /* IOSSoundOut.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOSSoundOut.swift; sourceTree = "<group>"; };
 		84C659DF1F79B05E007BE6E9 /* ReceiverPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiverPlayer.swift; sourceTree = "<group>"; };
 		84C659E11F79B7F8007BE6E9 /* Frame.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Frame.swift; sourceTree = "<group>"; };
+		CEB1B9502A7A32D700C75A6B /* SoundOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundOutput.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +70,7 @@
 		8480CAAE1F779AF500A8B92F /* JatxMusicReceiver */ = {
 			isa = PBXGroup;
 			children = (
+				CEB1B9502A7A32D700C75A6B /* SoundOutput.swift */,
 				8480CAAF1F779AF600A8B92F /* AppDelegate.swift */,
 				8480CAB11F779AF600A8B92F /* ViewController.swift */,
 				8480CAB31F779AF600A8B92F /* Main.storyboard */,
@@ -126,6 +129,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -163,6 +167,7 @@
 				84C659DC1F79AE3D007BE6E9 /* SoundOut.swift in Sources */,
 				8480CAB21F779AF600A8B92F /* ViewController.swift in Sources */,
 				847C8C531F78A02800707FC7 /* ReceiverController.swift in Sources */,
+				CEB1B9512A7A32D700C75A6B /* SoundOutput.swift in Sources */,
 				847035581F7866E3007FBB6C /* AutoConnectThread.swift in Sources */,
 				8480CAB01F779AF600A8B92F /* AppDelegate.swift in Sources */,
 				847035561F784AF2007FBB6C /* UI.swift in Sources */,
@@ -233,6 +238,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -271,6 +277,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

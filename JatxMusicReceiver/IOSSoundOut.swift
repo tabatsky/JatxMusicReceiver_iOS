@@ -9,27 +9,33 @@
 import Foundation
 
 class IOSSoundOut: SoundOut {
+    private var soundOutput: SoundOutput?
+    
     func renew(frameRate: Int, channels: Int) {
-        
+        soundOutput?.stopOutput()
+        soundOutput = SoundOutput(freq: frameRate, channels: channels)
+        soundOutput?.start()
     }
     
     func setVolume(volume: Int) {
-        
+        SoundOutput.volume = volume
+        soundOutput?.setVolume(volume)
     }
     
-    func write(data: [UInt8], offset: Int, size: Int) {
-        
+    func write(frame: Frame) {
+        soundOutput?.putFrame(f: frame)
     }
     
     func destroy() {
-        
+        soundOutput?.stopOutput()
+        soundOutput = nil
     }
     
     func play() {
-        
+        soundOutput?.startOutput()
     }
     
     func pause() {
-        
+        soundOutput?.pauseOutput()
     }
 }

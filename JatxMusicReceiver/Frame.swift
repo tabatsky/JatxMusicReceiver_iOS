@@ -19,7 +19,7 @@ class Frame {
 let FRAME_HEADER_SIZE = 64
 let FRAME_RATES = [32000, 44100, 48000]
 
-func frameFromInputStream(inputStream: NSInputStream) -> Frame? {
+func frameFromInputStream(inputStream: InputStream) -> Frame? {
     var freq1 = 0
     var freq2 = 0
     var freq3 = 0
@@ -37,13 +37,13 @@ func frameFromInputStream(inputStream: NSInputStream) -> Frame? {
     
     var channels = 0
     
-    var header = [UInt8](count: 1, repeatedValue: 0)
+    var header = [UInt8](repeating: 0, count: 1)
     
     var bytesRead = 0
     
     while (bytesRead < FRAME_HEADER_SIZE) {
         if (inputStream.hasBytesAvailable) {
-            let justRead = inputStream.read(UnsafeMutablePointer(header), maxLength: 1)
+            let justRead = inputStream.read(UnsafeMutablePointer(mutating: header), maxLength: 1)
             
             if (justRead < 0) {
                 return nil
@@ -81,7 +81,7 @@ func frameFromInputStream(inputStream: NSInputStream) -> Frame? {
                 bytesRead += justRead
             }
         } else {
-            NSThread.sleepForTimeInterval(0.02)
+            Thread.sleep(forTimeInterval: 0.02)
         }
     }
     
@@ -91,11 +91,11 @@ func frameFromInputStream(inputStream: NSInputStream) -> Frame? {
     
     bytesRead = 0;
     
-    let data = [UInt8](count: size, repeatedValue: 0)
+    let data = [UInt8](repeating: 0, count: size)
     
     while (bytesRead < size) {
         if (inputStream.hasBytesAvailable) {
-            let justRead = inputStream.read(UnsafeMutablePointer(data) + bytesRead, maxLength: size - bytesRead)
+            let justRead = inputStream.read(UnsafeMutablePointer(mutating: data) + bytesRead, maxLength: size - bytesRead)
             //int justRead = is.read(data, bytesRead, size-bytesRead);
             
             if (justRead < 0) {
@@ -106,7 +106,7 @@ func frameFromInputStream(inputStream: NSInputStream) -> Frame? {
                 bytesRead += justRead;
             }
         } else {
-            NSThread.sleepForTimeInterval(0.02)
+            Thread.sleep(forTimeInterval: 0.02)
         }
     }
     
@@ -118,7 +118,7 @@ func frameFromInputStream(inputStream: NSInputStream) -> Frame? {
     f.position = pos
     f.data = data
     
-    NSLog("frame received: %d, %d, %d, %d", f.size!, f.freq!, f.channels!, f.position!)
+    //NSLog("frame received: %d, %d, %d, %d", f.size!, f.freq!, f.channels!, f.position!)
     
     return f
 }

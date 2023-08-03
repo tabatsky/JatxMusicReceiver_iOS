@@ -10,7 +10,7 @@ import Foundation
 import AudioToolbox
 
 class SoundOutput: Thread {
-    public static var volume: Int = 100
+    public static var volume: Int = 0
     private var queueRef: AudioQueueRef?
     private var asbd: AudioStreamBasicDescription
     private var bufferList = [AudioQueueBufferRef]()
@@ -71,13 +71,13 @@ class SoundOutput: Thread {
     func putFrame(f: Frame) {
         var bufferRef: AudioQueueBufferRef?
         if (queueRef != nil) {
-            let statusAllocate = AudioQueueAllocateBuffer(queueRef!, UInt32(f.size), &bufferRef)
+            let statusAllocate = AudioQueueAllocateBuffer(queueRef!, UInt32(f.size!), &bufferRef)
             //NSLog("allocate status: " + statusAllocate.description)
             if (bufferRef != nil) {
-                bufferRef!.pointee.mAudioDataByteSize = UInt32(f.size)
+                bufferRef!.pointee.mAudioDataByteSize = UInt32(f.size!)
                 let audioData = bufferRef!.pointee.mAudioData
                 
-                audioData.copyMemory(from: f.data!, byteCount: f.size)
+                audioData.copyMemory(from: f.data!, byteCount: f.size!)
                 //dispatchQueue.async() {
                     self.bufferList.append(bufferRef!)
                 //}

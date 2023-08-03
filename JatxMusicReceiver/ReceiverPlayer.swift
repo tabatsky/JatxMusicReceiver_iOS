@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ReceiverPlayer: NSThread, NSStreamDelegate {
+class ReceiverPlayer: Thread, StreamDelegate {
     let CONNECT_PORT_PLAYER = 7171
     
     let FRAME_HEADER_SIZE = 32
@@ -24,8 +24,8 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
     
     var host: String?
     
-    var inputStream : NSInputStream?
-    var outputStream : NSOutputStream?
+    var inputStream : InputStream?
+    var outputStream : OutputStream?
     
     init(hostname: String, ui: UI, soundOut: SoundOut) {
         self.ui = ui
@@ -39,6 +39,7 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
     }
     
     func play() {
+        NSLog("(player) play")
         if (!(threadDictionary["isPlaying"] as! Bool)) {
             soundOut!.play()
             threadDictionary["isPlaying"] = true
@@ -46,6 +47,7 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
     }
     
     func pause() {
+        NSLog("(player) play")
         if ((threadDictionary["isPlaying"] as! Bool)) {
             soundOut!.pause()
             threadDictionary["isPlaying"] = false
@@ -53,13 +55,15 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
     }
     
     func setVolume(vol: Int) {
+        NSLog("(player) setVolume: %d", vol)
+        
         threadDictionary["volume"] = vol
         
-        soundOut!.setVolume(vol)
+        soundOut!.setVolume(volume: vol)
     }
     
     override func main() {
-        threadDictionary["volume"] = 100
+        threadDictionary["volume"] = 0
         threadDictionary["isPlaying"] = false
         
         var readStream : Unmanaged<CFReadStream>?
@@ -75,7 +79,7 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
         inputStream!.delegate = self
         //outputStream!.delegate = self
         
-        inputStream!.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+        inputStream!.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)
         //outputStream!.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
         
         inputStream!.open()
@@ -87,11 +91,11 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
         var channels = 2
         var position = 0
         //NSLog("b")
-        restartPlayer(frameRate, channels: channels)
+        restartPlayer(frameRate: frameRate, channels: channels)
         
-        while (!self.cancelled) {
+        while (!self.isCancelled) {
             if ((threadDictionary["isPlaying"] as! Bool)) {
-                let f = frameFromInputStream(inputStream!)
+                let f = frameFromInputStream(inputStream: inputStream!)
                 
                 if (f == nil) {
                     NSLog("nil frame, player thread broken")
@@ -102,14 +106,14 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
                     frameRate = f!.freq!
                     channels = f!.channels!
                     position = f!.position!
-                    restartPlayer(frameRate, channels: channels);
+                    restartPlayer(frameRate: frameRate, channels: channels);
                 }
                 
-                soundOut!.write(f!.data!, offset: 0, size: f!.size!);
+                soundOut!.write(frame: f!);
             }
         }
         
-        CFReadStreamSetProperty(inputStream, kCFStreamPropertyShouldCloseNativeSocket, kCFBooleanTrue)
+        CFReadStreamSetProperty(inputStream, CFStreamPropertyKey( kCFStreamPropertyShouldCloseNativeSocket), kCFBooleanTrue)
         
         inputStream?.close()
         //outputStream?.close()
@@ -123,10 +127,10 @@ class ReceiverPlayer: NSThread, NSStreamDelegate {
     
     func restartPlayer(frameRate: Int, channels: Int) {
         //NSLog("c")
-        soundOut!.renew(frameRate, channels: channels);
+        soundOut!.renew(frameRate: frameRate, channels: channels);
         
         //NSLog("d")
-        soundOut!.setVolume((threadDictionary["volume"] as! Int));
+        soundOut!.setVolume(volume: (threadDictionary["volume"] as! Int));
         
         //NSLog("e")
         NSLog("(player) " + "player restarted");
