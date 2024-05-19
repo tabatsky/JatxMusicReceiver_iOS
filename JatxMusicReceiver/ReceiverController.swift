@@ -84,7 +84,7 @@ class ReceiverController: Thread, StreamDelegate {
             if (inputStream!.hasBytesAvailable) {
                 cmdSkipped = 0;
                 
-                numBytesRead = inputStream!.read(UnsafeMutablePointer(mutating: data), maxLength: 1)
+                numBytesRead = inputStream!.read(&data, maxLength: 1)
                 
                 if (numBytesRead < 0) {
                     NSLog("controller frame broken")

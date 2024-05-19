@@ -43,7 +43,7 @@ func frameFromInputStream(inputStream: InputStream) -> Frame? {
     
     while (bytesRead < FRAME_HEADER_SIZE) {
         if (inputStream.hasBytesAvailable) {
-            let justRead = inputStream.read(UnsafeMutablePointer(mutating: header), maxLength: 1)
+            let justRead = inputStream.read(&header, maxLength: 1)
             
             if (justRead < 0) {
                 return nil
