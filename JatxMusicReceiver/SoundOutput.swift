@@ -69,23 +69,22 @@ class SoundOutput: Thread {
     }
     
     func putFrame(f: Frame) {
-        var bufferRef: AudioQueueBufferRef?
-        if (queueRef != nil) {
-            let statusAllocate = AudioQueueAllocateBuffer(queueRef!, UInt32(f.size!), &bufferRef)
-            //NSLog("allocate status: " + statusAllocate.description)
-            if (bufferRef != nil) {
-                bufferRef!.pointee.mAudioDataByteSize = UInt32(f.size!)
-                let audioData = bufferRef!.pointee.mAudioData
-                
-                audioData.copyMemory(from: f.data!, byteCount: f.size!)
-                //dispatchQueue.async() {
+        dispatchQueue.async() {
+            var bufferRef: AudioQueueBufferRef?
+            if (self.queueRef != nil) {
+                let statusAllocate = AudioQueueAllocateBuffer(self.queueRef!, UInt32(f.size!), &bufferRef)
+                //NSLog("allocate status: " + statusAllocate.description)
+                if (bufferRef != nil) {
+                    bufferRef!.pointee.mAudioDataByteSize = UInt32(f.size!)
+                    let audioData = bufferRef!.pointee.mAudioData
+                    audioData.copyMemory(from: f.data!, byteCount: f.size!)
                     self.bufferList.append(bufferRef!)
-                //}
+                } else {
+                    NSLog("playFrame: bufferRef is nil")
+                }
             } else {
-                NSLog("playFrame: bufferRef is nil")
+                NSLog("playFrame: queueRef is nil")
             }
-        } else {
-            NSLog("playFrame: queueRef is nil")
         }
     }
     
@@ -97,7 +96,7 @@ class SoundOutput: Thread {
             
             //dispatchQueue.sync() {
                 if (bufferList.isEmpty) {
-                    Thread.sleep(forTimeInterval: 0.2)
+                    Thread.sleep(forTimeInterval: 1.0)
                     if (bufferList.isEmpty) {
                         pauseOutput()
                     } else {
